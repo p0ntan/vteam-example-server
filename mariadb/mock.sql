@@ -24,7 +24,7 @@ LOAD DATA LOCAL INFILE '/docker-entrypoint-initdb.d/bike_data.csv'
 INTO TABLE `bike`
 CHARSET utf8
 FIELDS
-    TERMINATED BY ','
+    TERMINATED BY ';'
 LINES
     TERMINATED BY '\n'
 IGNORE 1 LINES
