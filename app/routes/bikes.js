@@ -12,6 +12,8 @@ let bikes = [];
 router.post('/', async (req, res) => {
     const data = req.body;
 
+    console.log(data);
+
     const jsonPoint = GeoJson.parse({
         lat: data.position[0],
         lng: data.position[1]

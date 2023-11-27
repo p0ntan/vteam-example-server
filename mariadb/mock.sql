@@ -12,10 +12,11 @@ USE `test`;
 DROP TABLE IF EXISTS `bike`;
 
 CREATE TABLE `bike`(
-    `id` INT NOT NULL,
-    `city_id` VARCHAR(10) NOT NULL,
-    `status_id` INT NOT NULL,
-    `geometry` VARCHAR(150) NOT NULL,
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `city_id` VARCHAR(10),
+    `status_id` INT DEFAULT 1,
+    `charge_perc` DECIMAL(5,2),
+    `coords` VARCHAR(100),
 
     PRIMARY KEY (`id`)
 );
@@ -24,8 +25,10 @@ LOAD DATA LOCAL INFILE '/docker-entrypoint-initdb.d/bike_data.csv'
 INTO TABLE `bike`
 CHARSET utf8
 FIELDS
-    TERMINATED BY ';'
+    TERMINATED BY ','
+    ENCLOSED BY '"'
 LINES
-    TERMINATED BY '\n'
+    TERMINATED BY '\r\n'
 IGNORE 1 LINES
+(id, city_id, coords)
 ;
