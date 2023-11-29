@@ -7,7 +7,7 @@ const pool = mariadb.createPool({
     // connectionLimit: 5
 });
 
-const updateBike = "UPDATE bike SET coords = ? WHERE id = ?;"
+const updateBike = "UPDATE bike SET coords = ?, charge_perc = ? WHERE id = ?;"
 const getBike = "SELECT * FROM bike;"
 
 async function getData(sqlQuery, args=[]) {

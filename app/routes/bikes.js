@@ -15,14 +15,14 @@ router.post('/', async (req, res) => {
     console.log(data);
 
     const jsonPoint = GeoJson.parse({
-        lat: data.position[0],
-        lng: data.position[1]
+        lat: data.coords[0],
+        lng: data.coords[1]
     },
     {
         Point: ['lat', 'lng']
     })
-    const asString = JSON.stringify(data.position);
-    const result = await dbModel.updateData(dbModel.queries.updateBike, [asString, data.id])
+    const asString = JSON.stringify(data.coords);
+    const result = await dbModel.updateData(dbModel.queries.updateBike, [asString, data.charge_perc, data.id])
     let response = {
         data: {
             msg: "all is good!"
