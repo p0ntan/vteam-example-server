@@ -7,7 +7,9 @@ const pool = mariadb.createPool({
     // connectionLimit: 5
 });
 
-const updateBike = "UPDATE bike SET coords = ?, charge_perc = ? WHERE id = ?;"
+const rentBike = "INSERT INTO trip (bike_id, user_id) VALUES (?, ?)"
+const updateBike = "UPDATE bike SET coords = ?, charge_perc = ?, status_id = ? WHERE id = ?;"
+const updateTrip = "UPDATE trip SET end_time = ? WHERE id = ?;"
 const getBike = "SELECT * FROM bike;"
 
 async function getData(sqlQuery, args=[]) {
@@ -64,6 +66,8 @@ module.exports = {
     createData,
     queries: {
         getBike,
-        updateBike
+        updateBike,
+        rentBike,
+        updateTrip
     }
 }

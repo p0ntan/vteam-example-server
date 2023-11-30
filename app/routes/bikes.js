@@ -9,11 +9,9 @@ let clients = []
 // Used for having multiple bikes connected to server and waiting for instructions
 let bikes = [];
 
-router.post('/', async (req, res) => {
+router.put('/:id', async (req, res) => {
     const data = req.body;
-
-    console.log(data);
-
+    const bikeId = req.params.id;
     const jsonPoint = GeoJson.parse({
         lat: data.coords[0],
         lng: data.coords[1]
@@ -22,7 +20,7 @@ router.post('/', async (req, res) => {
         Point: ['lat', 'lng']
     })
     const asString = JSON.stringify(data.coords);
-    const result = await dbModel.updateData(dbModel.queries.updateBike, [asString, data.charge_perc, data.id])
+    const result = await dbModel.updateData(dbModel.queries.updateBike, [asString, data.charge_perc, data.status_id, bikeId])
     let response = {
         data: {
             msg: "all is good!"
@@ -36,7 +34,7 @@ router.post('/', async (req, res) => {
     } else {
         // Send data to all connected clients
         const eventData = {
-            id: data.id,
+            id: bikeId,
             geoJSON: jsonPoint
         }
         // JSON.stringify(eventData)
@@ -78,7 +76,7 @@ router.get('/instructions', (req, res) => {
 
 router.get('/simulate', (req, res) => {
     const data = {
-        msg: "start_simulation"
+        instruction_all: "run_simulation"
     }
     bikes.forEach(bike => {
         bike.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -86,21 +84,46 @@ router.get('/simulate', (req, res) => {
     res.send("OK")
 })
 
-router.get('/rent/:id', (req, res) => {
-    const id = req.params.id;
+router.post('/rent/:bikeid', async (req, res) => {
+    const bikeId = req.params.bikeid;
+    const userId = req.body.id;
+    const result = await dbModel.createData(dbModel.queries.rentBike, [bikeId, userId])
+    const tripId = Number(result.insertId);
 
-    // Send data to all connected clients
-    const eventData = {
-        id: id,
-        geoJSON: "test bara"
+    let data = {
+        bike_id: bikeId,
+        instruction: 'unlock_bike'
     }
-    // JSON.stringify(eventData)
+    data = JSON.stringify(data);
     bikes.forEach(bike => {
-        bike.write(`data: ${JSON.stringify(eventData)}\n\n`);
+        bike.write(`data: ${data}\n\n`);
     });
 
-    res.json(req.body)
+    res.json({
+        trip_id: tripId,
+    })
 })
 
+router.put('/return/:id', async (req, res) => {
+    const tripId = req.params.tripid;
+    const bikeId = req.body.bike_id;
+    const timestamp = Date.now();
+    const date = new Date(timestamp);
+    const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
+    const result = await dbModel.updateData(dbModel.queries.updateTrip, [formattedDate, tripId])
+
+    let data = {
+        bike_id: bikeId,
+        instruction: 'lock_bike'
+    }
+    data = JSON.stringify(data);
+    bikes.forEach(bike => {
+        bike.write(`data: ${data}\n\n`);
+    });
+
+    res.json({
+        trip_id: tripId,
+    })
+});
 
 module.exports = router;

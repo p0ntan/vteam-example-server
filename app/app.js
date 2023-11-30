@@ -12,6 +12,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use("/", router);
+app.get('/', async (req, res) => {
+    res.json({
+        data: {
+            msg: "Hello World! This is the root."
+        }
+    });
+})
+app.use("/v1/", router);
 
 app.listen(port, console.log(`App is listening on ${port}`));
