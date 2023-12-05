@@ -85,7 +85,7 @@ router.get('/instructions', (req, res) => {
         res: res
     };
 
-    console.log("Öppnad för:", bikeId);
+    // console.log("Öppnad för:", bikeId);
 
     // Remove connection when closed
     res.on('close', () => {        
@@ -138,14 +138,13 @@ router.post('/rent/:bikeid', async (req, res) => {
     })
 })
 
-router.put('/return/:id', async (req, res) => {
+router.put('/return/:tripid', async (req, res) => {
     const tripId = req.params.tripid;
     const bikeId = req.body.bike_id;
     const timestamp = Date.now();
     const date = new Date(timestamp);
     const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
     const result = await dbModel.updateData(dbModel.queries.updateTrip, [formattedDate, tripId])
-
     let data = {
         bike_id: bikeId,
         instruction: 'lock_bike'
