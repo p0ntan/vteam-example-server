@@ -47,7 +47,7 @@ CREATE TABLE `trip`(
     FOREIGN KEY (`bike_id`) REFERENCES `bike` (`id`)
 );
 
-LOAD DATA LOCAL INFILE '/docker-entrypoint-initdb.d/bike_data_small.csv'
+LOAD DATA LOCAL INFILE '/docker-entrypoint-initdb.d/bike_data.csv'
 INTO TABLE `bike`
 CHARSET utf8
 FIELDS
