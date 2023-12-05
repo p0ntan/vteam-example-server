@@ -17,19 +17,24 @@ router.put('/:id', async (req, res) => {
     // Check if there is any cached data for bike
     const cacheEntry = cachedBikeData[bikeId];
 
-    // // Better logic is needed than this!!! There could be a cachedEntry initialzed by the /instructions route.
-    // const isCacheExpired = !cacheEntry || (Date.now() - cacheEntry.timestamp > CACHE_LIFETIME);
+    // TODO add logic for when writing to database and when not to.
+    // Cases when there is a cached object but no data (only res-object), time has expired or time has not expired.
+    // There could be a cachedEntry initialzed by the /instructions route
 
+    // Commented code below works for when all bike-clients is in an array, but not in an object
+
+    // const isCacheExpired = !cacheEntry || (Date.now() - cacheEntry.timestamp > CACHE_LIFETIME);
     // if (isCacheExpired) {
         // Cache is expired, update data in database.
         let result = await dbModel.updateData(dbModel.queries.updateBike, [asString, data.charge_perc, data.status_id, bikeId])
-        
+
         // Update cached with new timestamp
         cachedBikeData[bikeId] = {
             ...cachedBikeData[bikeId],
             data: data,
             timestamp: Date.now()
         };
+
     // } else {
     //     cachedBikeData[bikeId].data = data;
     // }
@@ -87,6 +92,9 @@ router.get('/instructions', (req, res) => {
 
     // console.log("Öppnad för:", bikeId);
 
+    // TODO maybe add some handling or something to check that a bike hasn't lost connection.
+    // Not needed for things to work but will prevent having "hanging" clients.
+
     // Remove connection when closed
     res.on('close', () => {        
         // Remove res from bike object
@@ -123,6 +131,8 @@ router.post('/rent/:bikeid', async (req, res) => {
     }
 
     data = JSON.stringify(data);
+
+    // TODO write to database before each rent if position is used for starting route in database
     
     // await dbModel.updateData(dbModel.queries.updateBike,
     //     [  
@@ -150,6 +160,9 @@ router.put('/return/:tripid', async (req, res) => {
         instruction: 'lock_bike'
     }
     data = JSON.stringify(data);
+
+    // TODO write to database before each return if position is used for starting route in database
+
     // await dbModel.updateData(dbModel.queries.updateBike,
     //     [  
     //         JSON.stringify(cachedBikeData[bikeId].data.coords),
