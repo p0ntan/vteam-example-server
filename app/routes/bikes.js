@@ -40,16 +40,17 @@ router.put('/:id', async (req, res) => {
     // }
 
     const jsonPoint = GeoJson.parse({
-        lat: data.coords[0],
-        lng: data.coords[1]
+        lng: data.coords[0],
+        lat: data.coords[1]
     },
     {
-        Point: ['lat', 'lng']
+        Point: ['lng', 'lat']
     })
 
     const eventData = {
         id: bikeId,
-        geoJSON: jsonPoint
+        geoJSON: jsonPoint,
+        speed: data.speed
     }
 
     clients.forEach(client => {
@@ -138,7 +139,7 @@ router.post('/rent/:bikeid', async (req, res) => {
     //     [  
     //         JSON.stringify(cachedBikeData[bikeId].data.coords),
     //         cachedBikeData[bikeId].data.charge_perc,
-    //         cachedBikeData[bikeId].data.status_id, 
+    //         2, 
     //         bikeId
     //     ])
     cachedBikeData[bikeId].res.write(`data: ${data}\n\n`);
