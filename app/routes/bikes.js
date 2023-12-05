@@ -44,13 +44,12 @@ router.put('/:id', async (req, res) => {
         lat: data.coords[1]
     },
     {
-        Point: ['lng', 'lat']
+        Point: ['lat', 'lng']
     })
 
     const eventData = {
         id: bikeId,
-        geoJSON: jsonPoint,
-        speed: data.speed
+        geoJSON: jsonPoint
     }
 
     clients.forEach(client => {
