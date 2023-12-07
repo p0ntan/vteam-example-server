@@ -126,8 +126,9 @@ router.post('/rent/:bikeid', async (req, res) => {
 
     let bikeData = cachedBikeData[bikeId];
     let data = {
-        bike_id: bikeId,
-        instruction: 'unlock_bike'
+        bike_id: parseInt(bikeId),
+        instruction: 'set_status',
+        args: [2]
     }
 
     data = JSON.stringify(data);
@@ -156,8 +157,9 @@ router.put('/return/:tripid', async (req, res) => {
     const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
     const result = await dbModel.updateData(dbModel.queries.updateTrip, [formattedDate, tripId])
     let data = {
-        bike_id: bikeId,
-        instruction: 'lock_bike'
+        bike_id: parseInt(bikeId),
+        instruction: 'set_status',
+        args: [1]
     }
     data = JSON.stringify(data);
 
